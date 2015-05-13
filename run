@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+start_index=$1
+end_index=$2
+per_proc_count=100000
+i=$start_index
+while [ $i -lt $end_index ]
+do
+	let j=$i+$per_proc_count-1
+	if [[ $j -gt $end_index ]];then
+		j=$end_index
+	fi
+	java -cp crawling.jar:lib/* com.test.BaikeSpiderTest $i $j > log-$i.txt
+	let i=$j+1
+	sleep 2m
+done
+#java -cp crawling.jar com.test.BaikeSpiderTest 1 10000 > log-4.txt
+
