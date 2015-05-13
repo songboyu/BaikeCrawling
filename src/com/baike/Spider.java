@@ -26,9 +26,11 @@ public class Spider {
 	private final String 	LEMMA_REX 	= "<a target=_blank href=\"/subview/(.*?)\">";
 	private final String 	ISPARENT_REX= "<div id=\"lemma-list\"";
 	private final String 	ID_REX 		= "href=\"/subview/(\\d+/\\d+).htm\"|href=\"/view/(\\d+).htm\"";
-	private final String 	TAG_ITEM_REX= "<sapn class=\"taglist\".*>(.*?)</.*sapn>";
+	private final String 	TAG_ITEM_REX= "<sapn class=\"taglist\">(.*?)</sapn>";
 	private final String	TAG_REX		= "<dd id=\"open-tag-item\">(.*?)</dd";
+	private final String	TAG_A_REX	= "<a target=.*?>(.*?)</a>";
 	
+	private	Pattern tagAPattern = Pattern.compile(TAG_A_REX);
 	private	Pattern idPattern 	= Pattern.compile(ID_REX);
 	private	Pattern paPattern 	= Pattern.compile(ISPARENT_REX);
 	private	Pattern titlePattern= Pattern.compile(TITLE_REX);
@@ -196,7 +198,7 @@ public class Spider {
 					id = "s_"+id;
 				}
 				if(id != null && !id.equals("") && !id.equals(content.getId())){
-					if(ids == ""){
+					if(ids.equals("")){
 						ids += id;
 					}else{
 						ids += "," + id;
@@ -208,26 +210,26 @@ public class Spider {
 			if(tagMatcher.find()){
 				String tagL = tagMatcher.group(1);
 				Matcher tagIMatcher = tagIPattern.matcher(tagL);
-				if(tagIMatcher.find())
+				while(tagIMatcher.find())
 				{
 					String tag = tagIMatcher.group(1);
-					if(tag == null)
-						tag = tagIMatcher.group(2);
-					if(tag != null && !tag.equals(""))
-						tags += tag;
-					while(tagIMatcher.find())
-					{
-						tag = tagIMatcher.group(1);
-						if(tag == null)
-							tag = tagIMatcher.group(2);
-						if(tag != null && !tag.equals(""))
+					Matcher tagAMatcher = tagAPattern.matcher(tag);
+					if(tagAMatcher.find()){
+						tag = tagAMatcher.group(1);
+					}
+					if(tag != null && !tag.equals("")){
+						if(tags.equals("")){
+							tags += tag;
+						}else{
 							tags += "," + tag;
+						}
 					}
 				}
 			}
-			if(!title.equals(""))
-				dataQueue.add("["+content.getId()+"]{"+title+"}<"+ tags+">("  + summary + ")【" + ids + "】\n");
-//				dataQueue.add(title + type + summary + tags + "\n");
+			if(!title.equals("")){
+				String line = "["+content.getId()+"]{"+title+"}<"+ tags+">("  + summary + ")【" + ids + "】\n";
+				dataQueue.add(line);
+			}
 			tagMatcher = null;
 			titleMatcher = null;
 		}
