@@ -25,7 +25,7 @@ public class Spider {
 	private final String 	SUMMARY_REX = "<meta name=\"Description\" content=\"(.*?)\"\\s*/>";
 	private final String 	LEMMA_REX 	= "<a target=_blank href=\"/subview/(.*?)\">";
 	private final String 	ISPARENT_REX= "<div id=\"lemma-list\"";
-	private final String 	ID_REX 		= "href=\"/subview/(\\d+/\\d+).htm\"|href=\"/view/(\\d+).htm\"";
+	private final String 	ID_REX 		= "href=\"/subview/(\\d+/\\d+).htm|href=\"/view/(\\d+).htm";
 	private final String 	TAG_ITEM_REX= "<sapn class=\"taglist\">(.*?)</sapn>";
 	private final String	TAG_REX		= "<dd id=\"open-tag-item\">(.*?)</dd";
 	private final String	TAG_A_REX	= "<a target=.*?>(.*?)</a>";
