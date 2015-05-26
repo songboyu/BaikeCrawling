@@ -18,11 +18,18 @@ entSet = set()
 def printTimeDiff(old):
 	now = datetime.datetime.now()
 	timeDiff = (now - old).seconds
-	print'Cost %s h %s min %s s' % (timeDiff / (60*60), timeDiff / 60 , timeDiff)
+	hour = timeDiff / (60*60)
+	minute = timeDiff / 60 - hour*60
+	seconds = timeDiff - hour*60*60 - minute*60
+	print'Cost %s h %s min %s s' % (hour, minute, seconds)
 
 '''写入词汇实体'''
 def insertEntries(entId, title, summary):
+	if entId in entSet:
+		return None
+	entSet.add(entId)
 	entriesFile.write(entId+'\t'+title+'\t'+summary+'\n')
+	return entId
 
 '''写入类别'''
 def insertTags(tags):
@@ -89,10 +96,10 @@ def startProcData():
 				# inlinks
 				inlinks = set(m.group(5).split(','))
 				
-				# 写入inlinks
-				insertInlinks(entId, inlinks)
 				# 写入entries
-				insertEntries(entId, title, summary)
+				if insertEntries(entId, title, summary) != None:
+					# 写入inlinks
+					insertInlinks(entId, inlinks)
 				# 写入tags
 				tagIds = insertTags(tags)
 				if tagIds!=None and len(tagIds) > 0:
@@ -101,12 +108,12 @@ def startProcData():
 					
 
 			count += 1
-			if count % 10000 == 0:
+			if count % 100000 == 0:
 				print 'There is ' + str(count) + ' records inserted.'
 				printTimeDiff(old)
 
-		print 'There is ' + str(count) + ' records inserted.'
-		printTimeDiff(old)
+	print 'There is ' + str(count) + ' records inserted.'
+	printTimeDiff(old)
 
 if __name__ == '__main__':
 	startProcData()
